@@ -124,7 +124,51 @@ pdfView.fromStream(inputStream).load()
 
 ---
 
-### 3. 📑 Table of Contents (Digital Chapters)
+### 3. 🎨 Jetpack Compose Integration (Kotlin)
+
+PDFReader works smoothly inside **Jetpack Compose** using `AndroidView`:
+
+```kotlin
+@Composable
+fun JetpackComposePdfViewer(
+    assetFileName: String,
+    modifier: Modifier = Modifier.fillMaxSize(),
+    isNightMode: Boolean = false,
+    onPageChanged: ((page: Int, totalPages: Int) -> Unit)? = null
+) {
+    val context = LocalContext.current
+    val pdfView = remember { PDFView(context, null) }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            pdfView.recycle() // Release native memory on exit
+        }
+    }
+
+    AndroidView(
+        modifier = modifier,
+        factory = {
+            pdfView.apply {
+                fromAsset(assetFileName)
+                    .defaultPage(0)
+                    .enableSwipe(true)
+                    .enableDoubletap(true)
+                    .scrollHandle(DefaultScrollHandle(context))
+                    .nightMode(isNightMode)
+                    .onPageChange { p, count -> onPageChanged?.invoke(p, count) }
+                    .load()
+            }
+        },
+        update = { view ->
+            view.setNightMode(isNightMode)
+        }
+    )
+}
+```
+
+---
+
+### 4. 📑 Table of Contents (Digital Chapters)
 
 Extract and display document bookmarks/chapters, and jump to the target page:
 
@@ -154,7 +198,7 @@ pdfView.jumpTo(targetPageIndex, true)
 
 ---
 
-### 4. ℹ️ Extracting Document Metadata
+### 5. ℹ️ Extracting Document Metadata
 
 Access document properties in `onLoad` callback:
 
@@ -174,7 +218,7 @@ if (meta != null) {
 
 ---
 
-### 5. 🌙 Night Mode & Runtime Controls
+### 6. 🌙 Night Mode & Runtime Controls
 
 ```kotlin
 // Toggle Night Mode (Inverts colors)
