@@ -1,33 +1,38 @@
 # PDFReader
 
-[![JitPack](https://jitpack.io/v/abswerit/pdfreader.svg)](https://jitpack.io/#abswerit/pdfreader)
+[![JitPack](https://jitpack.io/v/abswerit/PDFReader.svg)](https://jitpack.io/#abswerit/PDFReader)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
-[![Android 15 Ready](https://img.shields.io/badge/16%20KB%20Page%20Size-Supported-success)](16KB_SUPPORT.md)
+[![Android Ready](https://img.shields.io/badge/Android%2017%20(API%2037)-Ready-blue)](build.gradle)
+[![16 KB Page Size](https://img.shields.io/badge/16%20KB%20Page%20Size-100%25%20Verified%20%E2%9C%85-success)](16KB_SUPPORT.md)
 
-**PDFReader** is an Android PDF viewing library based on `PdfiumAndroid` that provides a complete, smooth, and customizable PDF viewing experience.
+**PDFReader** is an ultra-fast, robust, and modern Android PDF viewing library based on `PdfiumAndroid`. Developed and maintained by **[Abswer.com](https://abswer.com)**.
 
-Supports modern Android devices, including **16 KB memory page size** (required for Android 15+ and Google Play compliance).
-
----
-
-## Features
-
-- ⚡ **Fast & Smooth:** Powered by optimized native Pdfium rendering.
-- 📱 **16 KB Page Alignment:** Fully compatible with Android 15 16 KB memory page requirements.
-- 🔍 **Gestures & Zooming:** Pinch to zoom, double-tap zoom, and smooth scrolling.
-- 🔄 **Scroll Orientation:** Vertical and horizontal page scrolling.
-- 🌙 **Night Mode:** Inverted color rendering for comfortable reading in low light.
-- 📂 **Flexible Sources:** Load PDFs from Assets, Internal/External Files, Content URIs, Streams, and Byte arrays.
-- 🎛️ **Page Management:** Render specific pages, custom page spacing, and custom scroll handles.
+Engineered from the ground up for modern Android versions: fully compatible with **16 KB memory page size requirements** (Android 15+ and Google Play compliance) and forward-compatible up to **Android 17 (API 37)** with **zero deprecated APIs** (fully migrated away from `AsyncTask`).
 
 ---
 
-## Installation
+## ✨ Features
 
-### 1. Add JitPack repository
+- 📱 **16 KB Memory Page Size Verified:** All 64-bit native libraries (`arm64-v8a`, `x86_64`) are built and packaged with 16 KB page alignment (`0x4000`), passing Google Play's 16 KB policy.
+- 🚀 **Android 17 (API 37) Ready:** Compiled and tested against modern Android toolchains, AGP 8.13.0, Gradle 8.14, and Java 17.
+- 🧵 **Modern Concurrency:** Multi-threaded decoding powered by Java `ExecutorService` and `Handler(Looper.getMainLooper())` (no deprecated `android.os.AsyncTask`).
+- 📑 **Digital Table of Contents (Bookmarks / Chapters):** Full support for reading document outlines, chapter trees, and jumping directly to chapters.
+- ℹ️ **Document Metadata:** Direct access to PDF metadata (Title, Author, Subject, Creator, Producer, Creation and Modification Dates).
+- 🌙 **Night Mode:** Runtime inverted color rendering for comfortable dark mode reading.
+- 🔄 **Orientation & Scroll Controls:** Seamless vertical and horizontal scrolling, page snapping, and page fling animations.
+- 🔍 **Smooth Gestures & Zooming:** Configurable pinch-to-zoom, double-tap zoom, and custom min/mid/max zoom factors.
+- 🔗 **Interactive Links:** Built-in URI and internal page link handling.
+- 🔐 **Password-Protected PDFs:** Effortlessly open encrypted PDF files with password support.
+- 📂 **Multi-Source Loading:** Load PDFs from Assets, Internal/External Storage Files, Content URIs (FileProvider), Byte Arrays, and InputStreams.
 
-In modern Android projects (Gradle 7+), add JitPack to your `settings.gradle`:
+---
+
+## 📦 Installation
+
+### 1. Add JitPack Repository
+
+In your project-level `settings.gradle` (or `settings.gradle.kts`):
 
 ```kotlin
 dependencyResolutionManagement {
@@ -40,7 +45,7 @@ dependencyResolutionManagement {
 }
 ```
 
-*Or in your project-level `build.gradle` (if using classic structure):*
+*Or in your project-level `build.gradle` (classic layout):*
 ```groovy
 allprojects {
     repositories {
@@ -51,52 +56,53 @@ allprojects {
 }
 ```
 
-### 2. Add the dependency
+### 2. Add Dependency
 
-In your app module's `build.gradle` / `build.gradle.kts`:
+In your app module's `build.gradle` (or `build.gradle.kts`):
 
 ```groovy
 dependencies {
-    implementation 'com.github.abswerit:pdfreader:1.0.0'
+    implementation 'com.github.abswerit:PDFReader:1.0.0'
 }
 ```
 
 ---
 
-## Quick Start
+## 🚀 Usage Guide
 
-### 1. Add `PDFView` to your layout (XML)
+### 1. Add `PDFView` to Layout (XML)
 
 ```xml
 <com.github.barteksc.pdfviewer.PDFView
     android:id="@+id/pdfView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    android:layout_height="match_parent" />
 ```
 
-### 2. Load a PDF in Kotlin / Java
+---
 
-#### In Kotlin:
+### 2. Basic PDF Loading (Kotlin)
+
 ```kotlin
 val pdfView: PDFView = findViewById(R.id.pdfView)
 
 // Load from Assets
-pdfView.fromAsset("sample.pdf")
+pdfView.fromAsset("my_book.pdf")
     .defaultPage(0)
     .enableSwipe(true)
     .swipeHorizontal(false)
     .enableDoubletap(true)
     .enableAnnotationRendering(true)
     .scrollHandle(DefaultScrollHandle(this))
-    .spacing(10) // in dp
-    .onLoad { nbPages -> 
-        // PDF loaded successfully
+    .spacing(10) // dp
+    .onLoad { nbPages ->
+        Log.d("PDFReader", "Total pages loaded: $nbPages")
     }
     .onPageChange { page, pageCount ->
-        // Page changed
+        Log.d("PDFReader", "Current page: ${page + 1} of $pageCount")
     }
-    .onError { t ->
-        // Error handling
+    .onError { error ->
+        Log.e("PDFReader", "Error loading PDF", error)
     }
     .load()
 ```
@@ -106,10 +112,10 @@ pdfView.fromAsset("sample.pdf")
 // From File
 pdfView.fromFile(file).load()
 
-// From Uri (FileProvider / ContentResolver)
-pdfView.fromUri(uri).load()
+// From Content Uri
+pdfView.fromUri(contentUri).load()
 
-// From ByteArray
+// From Byte Array
 pdfView.fromBytes(byteArray).load()
 
 // From InputStream
@@ -118,39 +124,124 @@ pdfView.fromStream(inputStream).load()
 
 ---
 
-## Configuration Options
+### 3. 📑 Table of Contents (Digital Chapters)
 
-| Method | Description | Default |
+Extract and display document bookmarks/chapters, and jump to the target page:
+
+```kotlin
+// Check if PDF has chapters/bookmarks
+if (pdfView.hasTableOfContents()) {
+    val tableOfContents: List<PdfDocument.Bookmark> = pdfView.tableOfContents
+
+    for (bookmark in tableOfContents) {
+        val chapterTitle = bookmark.title
+        val targetPageIndex = bookmark.pageIdx // 0-indexed
+
+        Log.d("PDFReader", "Chapter: $chapterTitle (Page: ${targetPageIndex + 1})")
+
+        // Handle nested sub-chapters
+        if (bookmark.hasChildren()) {
+            for (subChapter in bookmark.children) {
+                Log.d("PDFReader", "  Sub-Chapter: ${subChapter.title}")
+            }
+        }
+    }
+}
+
+// Jump to a specific chapter smoothly
+pdfView.jumpTo(targetPageIndex, true)
+```
+
+---
+
+### 4. ℹ️ Extracting Document Metadata
+
+Access document properties in `onLoad` callback:
+
+```kotlin
+val meta: PdfDocument.Meta? = pdfView.documentMeta
+if (meta != null) {
+    val title = meta.title
+    val author = meta.author
+    val subject = meta.subject
+    val keywords = meta.keywords
+    val creator = meta.creator
+    val producer = meta.producer
+    val creationDate = meta.creationDate
+    val modDate = meta.modDate
+}
+```
+
+---
+
+### 5. 🌙 Night Mode & Runtime Controls
+
+```kotlin
+// Toggle Night Mode (Inverts colors)
+pdfView.setNightMode(true)
+
+// Jump to any page (0-indexed) with animation
+pdfView.jumpTo(pageNumber, true)
+
+// Zoom Controls
+pdfView.resetZoomWithAnimation()
+pdfView.zoomWithAnimation(2.0f) // zoom to 2x
+```
+
+---
+
+## ⚙️ Configuration Reference
+
+| Config Method | Description | Default |
 | :--- | :--- | :--- |
-| `enableSwipe(boolean)` | Enable or disable swiping to change pages | `true` |
-| `swipeHorizontal(boolean)` | Change scroll direction from vertical to horizontal | `false` |
-| `enableDoubletap(boolean)` | Enable or disable double-tap to zoom | `true` |
-| `defaultPage(int)` | Set initial page to display (0-indexed) | `0` |
-| `nightMode(boolean)` | Invert colors for dark mode reading | `false` |
-| `enableAnnotationRendering(boolean)` | Render annotations (comments, forms, etc.) | `false` |
-| `scrollHandle(ScrollHandle)` | Attach a custom or default scroll handle widget | `null` |
+| `enableSwipe(boolean)` | Enable or disable touch swiping | `true` |
+| `swipeHorizontal(boolean)` | Scroll horizontally instead of vertically | `false` |
+| `enableDoubletap(boolean)` | Enable double-tap to zoom | `true` |
+| `defaultPage(int)` | Initial page to open (0-indexed) | `0` |
+| `nightMode(boolean)` | Invert page colors for dark theme | `false` |
+| `enableAnnotationRendering(boolean)` | Render embedded annotations & form fields | `false` |
+| `scrollHandle(ScrollHandle)` | Attach custom or default scroll handle widget | `null` |
 | `spacing(int)` | Spacing between pages in dp | `0` |
-| `autoSpacing(boolean)` | Automatically calculate page spacing | `false` |
-| `pageFitPolicy(FitPolicy)` | Page fit policy (`WIDTH`, `HEIGHT`, `BOTH`) | `FitPolicy.WIDTH` |
-| `password(String)` | Open password-protected PDFs | `null` |
+| `autoSpacing(boolean)` | Automatically adjust spacing to fit screen | `false` |
+| `pageFitPolicy(FitPolicy)` | Page sizing mode (`WIDTH`, `HEIGHT`, `BOTH`) | `FitPolicy.BOTH` |
+| `pageSnap(boolean)` | Snap page by page like a ViewPager | `false` |
+| `pageFling(boolean)` | Enable fling velocity gesture | `false` |
+| `password(String)` | Decrypt password-protected PDF | `null` |
 
 ---
 
-## 16 KB Page Size Compatibility
+## 🛡️ 16 KB Page Size Compatibility
 
-This library uses `io.github.oothp:pdfium-android` (version `1.9.5-beta01`+), which includes native binaries built with 16 KB page alignment. It meets the requirements for Google Play 64-bit and Android 15 compatibility.
+Starting November 2025, Google Play requires all apps targeting modern Android to support **16 KB memory page size**.
 
----
-
-## Author & Support
-
-- **Website:** [Abswer.com](https://abswer.com)
-- **GitHub:** [@abswerit](https://github.com/abswerit)
-- **Email:** [contact@abswer.com](mailto:contact@abswer.com)
+This library integrates `io.github.oothp:pdfium-android` where:
+- All 64-bit ELF shared objects (`arm64-v8a`, `x86_64`) have loadable segments aligned to `0x4000` (16 KB).
+- Uncompressed packaging in APK ensures byte offset modulo `16384 == 0`.
+- Meets all Google Play Console requirements without native crash risks.
 
 ---
 
-## License
+## 🔒 ProGuard / R8 Rules
+
+If your app uses R8 / ProGuard, add the following rules:
+
+```proguard
+-keep class com.github.barteksc.pdfviewer.** { *; }
+-keep class com.shockwave.pdfium.** { *; }
+```
+
+---
+
+## 👨‍💻 Author & Support
+
+- **Organization:** [Abswer.com](https://abswer.com)
+- **Developer:** Abswer ([@abswerit](https://github.com/abswerit))
+- **Email:** [contact@abswer.com](mailto:contact@abswer.com) / [admin@abswer.com](mailto:admin@abswer.com)
+- **Repository:** [https://github.com/abswerit/PDFReader](https://github.com/abswerit/PDFReader)
+
+---
+
+## 📄 License
 
 ```text
 Copyright 2026 Abswer (https://abswer.com)

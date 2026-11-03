@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_toc"
+        android:title="@string/table_of_contents"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_jump"
+        android:title="@string/jump_to_page"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_night_mode"
+        android:title="@string/night_mode"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_scroll_direction"
+        android:title="@string/scroll_direction"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_doc_info"
+        android:title="@string/doc_info"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/pickFile"
         android:icon="@drawable/ic_open_in_browser_grey_700_48dp"
         android:title="@string/pick_file"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 </menu>

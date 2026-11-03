@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Abswer (https://abswer.com)
+ * Copyright 2026 Abswer (https://abswer.com)
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,8 @@
  */
 package com.github.barteksc.pdfviewer;
 
-import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.github.barteksc.pdfviewer.source.DocumentSource;
 import com.shockwave.pdfium.PdfDocument;
@@ -23,17 +24,24 @@ import com.shockwave.pdfium.PdfiumCore;
 import com.shockwave.pdfium.util.Size;
 
 import java.lang.ref.WeakReference;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
-class DecodingAsyncTask extends AsyncTask<Void, Void, Throwable> {
+class DecodingAsyncTask {
 
-    private boolean cancelled;
+    private static final Executor DEFAULT_EXECUTOR = Executors.newFixedThreadPool(
+            Math.max(2, Runtime.getRuntime().availableProcessors())
+    );
 
-    private WeakReference<PDFView> pdfViewReference;
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private volatile boolean cancelled = false;
 
-    private PdfiumCore pdfiumCore;
-    private String password;
-    private DocumentSource docSource;
-    private int[] userPages;
+    private final WeakReference<PDFView> pdfViewReference;
+
+    private final PdfiumCore pdfiumCore;
+    private final String password;
+    private final DocumentSource docSource;
+    private final int[] userPages;
     private PdfFile pdfFile;
 
     DecodingAsyncTask(DocumentSource docSource, String password, int[] userPages, PDFView pdfView, PdfiumCore pdfiumCore) {
@@ -45,8 +53,18 @@ class DecodingAsyncTask extends AsyncTask<Void, Void, Throwable> {
         this.pdfiumCore = pdfiumCore;
     }
 
-    @Override
-    protected Throwable doInBackground(Void... params) {
+    public void executeOnExecutor(Executor executor) {
+        Executor exec = executor != null ? executor : DEFAULT_EXECUTOR;
+        exec.execute(this::run);
+    }
+
+    public void execute() {
+        DEFAULT_EXECUTOR.execute(this::run);
+    }
+
+    private void run() {
+        if (cancelled) return;
+        Throwable error = null;
         try {
             PDFView pdfView = pdfViewReference.get();
             if (pdfView != null) {
@@ -54,36 +72,37 @@ class DecodingAsyncTask extends AsyncTask<Void, Void, Throwable> {
                 pdfFile = new PdfFile(pdfiumCore, pdfDocument, pdfView.getPageFitPolicy(), getViewSize(pdfView),
                         userPages, pdfView.isSwipeVertical(), pdfView.getSpacingPx(), pdfView.isAutoSpacingEnabled(),
                         pdfView.isFitEachPage());
-                return null;
             } else {
-                return new NullPointerException("pdfView == null");
+                error = new NullPointerException("pdfView == null");
             }
-
         } catch (Throwable t) {
-            return t;
+            error = t;
         }
+
+        final Throwable finalError = error;
+        mainHandler.post(() -> {
+            PDFView pdfView = pdfViewReference.get();
+            if (pdfView != null) {
+                if (finalError != null) {
+                    pdfView.loadError(finalError);
+                    return;
+                }
+                if (!cancelled) {
+                    pdfView.loadComplete(pdfFile);
+                }
+            }
+        });
     }
 
     private Size getViewSize(PDFView pdfView) {
         return new Size(pdfView.getWidth(), pdfView.getHeight());
     }
 
-    @Override
-    protected void onPostExecute(Throwable t) {
-        PDFView pdfView = pdfViewReference.get();
-        if (pdfView != null) {
-            if (t != null) {
-                pdfView.loadError(t);
-                return;
-            }
-            if (!cancelled) {
-                pdfView.loadComplete(pdfFile);
-            }
-        }
+    public void cancel(boolean mayInterruptIfRunning) {
+        cancelled = true;
     }
 
-    @Override
-    protected void onCancelled() {
-        cancelled = true;
+    public void cancel() {
+        cancel(true);
     }
 }

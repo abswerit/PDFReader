@@ -1,5 +1,11 @@
 <resources>
-    <string name="app_name">AndroidPdfViewer demo</string>
-    <string name="pick_file">Pick file</string>
+    <string name="app_name">PDFReader Demo - Abswer.com</string>
+    <string name="pick_file">Open PDF</string>
     <string name="toast_pick_file_error">Unable to pick file. Check status of file manager.</string>
+    <string name="table_of_contents">Table of Contents (Chapters)</string>
+    <string name="night_mode">Night Mode</string>
+    <string name="scroll_direction">Toggle Horizontal/Vertical</string>
+    <string name="jump_to_page">Jump to Page</string>
+    <string name="doc_info">Document Info</string>
+    <string name="no_toc">No Table of Contents (Chapters) available for this document.</string>
 </resources>

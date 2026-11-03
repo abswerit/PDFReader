@@ -29,7 +29,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.HandlerThread;
 import android.util.AttributeSet;
@@ -277,7 +276,7 @@ public class PDFView extends RelativeLayout {
         recycled = false;
         // Start decoding document
         decodingAsyncTask = new DecodingAsyncTask(docSource, password, userPages, this, pdfiumCore);
-        decodingAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        decodingAsyncTask.execute();
     }
 
     /**
@@ -1272,6 +1271,11 @@ public class PDFView extends RelativeLayout {
     }
 
     /** Will be empty until document is loaded */
+    public boolean hasTableOfContents() {
+        List<PdfDocument.Bookmark> bookmarks = getTableOfContents();
+        return bookmarks != null && !bookmarks.isEmpty();
+    }
+
     public List<PdfDocument.Bookmark> getTableOfContents() {
         if (pdfFile == null) {
             return Collections.emptyList();

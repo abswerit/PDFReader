@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.os.Looper;
 import androidx.core.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -29,7 +30,7 @@ public class DefaultScrollHandle extends RelativeLayout implements ScrollHandle 
     private PDFView pdfView;
     private float currentPos;
 
-    private Handler handler = new Handler();
+    private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable hidePageScrollerRunnable = new Runnable() {
         @Override
         public void run() {
@@ -78,11 +79,7 @@ public class DefaultScrollHandle extends RelativeLayout implements ScrollHandle 
             }
         }
 
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            setBackgroundDrawable(background);
-        } else {
-            setBackground(background);
-        }
+        setBackground(background);
 
         LayoutParams lp = new LayoutParams(Util.getDP(context, width), Util.getDP(context, height));
         lp.setMargins(0, 0, 0, 0);
