@@ -1,3 +1,13 @@
+# Changelog
+
+## 1.0.0 (2026-11-03)
+* Maintained and customized by Abswer.com (https://abswer.com)
+* Added support for Android 15 16 KB memory page size alignment
+* Upgraded to Android Gradle Plugin 8.13.0 and Gradle 8.14
+* Target SDK updated to 36
+* Added JitPack publishing configuration for `com.github.abswerit:pdfreader:1.0.0`
+* Automated GitHub CI build workflow
+
 ## 3.2.0-beta.1 (2019-08-18)
 * Merge PR #714 with optimized page load
 * Merge PR #776 with fix for max & min zoom level

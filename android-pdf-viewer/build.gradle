@@ -3,22 +3,22 @@ apply plugin: 'maven-publish'
 
 ext {
     bintrayRepo = 'maven'
-    bintrayName = 'android-pdf-viewer'
+    bintrayName = 'pdfreader'
 
-    publishedGroupId = 'com.github.barteksc'
-    libraryName = 'AndroidPdfViewer'
-    artifact = 'android-pdf-viewer'
+    publishedGroupId = 'com.github.abswerit'
+    libraryName = 'pdfreader'
+    artifact = 'pdfreader'
 
-    libraryDescription = 'Android view for displaying PDFs rendered with PdfiumAndroid'
+    libraryDescription = 'Android view for displaying PDFs rendered with PdfiumAndroid, maintained by Abswer.com'
 
-    siteUrl = 'https://github.com/barteksc/AndroidPdfViewer'
-    gitUrl = 'https://github.com/barteksc/AndroidPdfViewer.git'
+    siteUrl = 'https://abswer.com'
+    gitUrl = 'https://github.com/abswerit/pdfreader.git'
 
     libraryVersion = '1.0.0'
 
-    developerId = 'barteksc'
-    developerName = 'Bartosz Schiller'
-    developerEmail = 'barteksch@boo.pl'
+    developerId = 'abswerit'
+    developerName = 'Abswer'
+    developerEmail = 'contact@abswer.com'
 
     licenseName = 'The Apache Software License, Version 2.0'
     licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
@@ -50,7 +50,7 @@ android {
     }
 
     // Enable 16 KB page size support for native libraries
-    ndkVersion "28.0.12433566"  // Use NDK r28+ for 16 KB support
+    ndkVersion "30.0.16248370"
 
     // Disable lint for now to focus on 16 KB compatibility
     lint {
@@ -70,7 +70,7 @@ dependencies {
 }
 
 // Configure Maven publishing for JitPack
-group = project.findProperty("group") ?: "com.github.xposed73"
+group = project.findProperty("group") ?: "com.github.abswerit"
 version = project.findProperty("version") ?: "1.0.0"
 
 // sources jar is produced via android.publishing.singleVariant.withSourcesJar()
@@ -81,11 +81,20 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
                 groupId = project.group
-                artifactId = "AndroidPdfViewer"
+                artifactId = "pdfreader"
                 version = project.version as String
                 pom {
-                    name = "AndroidPdfViewer"
-                    description = "Android view for displaying PDFs rendered with PdfiumAndroid"
+                    name = "pdfreader"
+                    description = "Android view for displaying PDFs rendered with PdfiumAndroid, maintained by Abswer.com"
+                    url = "https://abswer.com"
+                    developers {
+                        developer {
+                            id = "abswerit"
+                            name = "Abswer"
+                            email = "contact@abswer.com"
+                            url = "https://abswer.com"
+                        }
+                    }
                     licenses {
                         license {
                             name = "The Apache Software License, Version 2.0"
@@ -93,11 +102,12 @@ afterEvaluate {
                         }
                     }
                     scm {
-                        url = "https://github.com/xposed73/AndroidPdfViewer"
+                        url = "https://github.com/abswerit/pdfreader"
+                        connection = "scm:git:git://github.com/abswerit/pdfreader.git"
+                        developerConnection = "scm:git:ssh://github.com:abswerit/pdfreader.git"
                     }
                 }
             }
         }
     }
 }
-
