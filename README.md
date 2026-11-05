@@ -254,28 +254,50 @@ pdfView.fromAsset("scanned_book.pdf")
 
 ---
 
-### 8. 📸 Standalone PDF Utilities & Thumbnail Extractor
+### 8. 📸 Standalone PDF Utilities, Image Exporter, Print & Share
 
-You can render any page of a PDF directly to an Android `Bitmap` (e.g. for generating book covers, gallery previews, or exporting images) or inspect document details **without inflating a PDFView**:
+You can render any page of a PDF directly to an Android `Bitmap` (e.g. for generating book covers, gallery previews, or exporting images), export pages directly to PNG/JPEG files on disk, print via Android's native `PrintManager`, share, or inspect document details **without inflating a PDFView**:
 
 ```kotlin
 // 1. Generate Cover Photo / Thumbnail (Page 0) as Bitmap
 val coverBitmap: Bitmap = PdfUtils.renderPageToBitmap(context, pdfFile, pageIndex = 0, width = 400, height = 600)
 imageView.setImageBitmap(coverBitmap)
 
-// 2. Get total page count directly
+// 2. Export Any Page Directly to Image File on Disk (PNG / JPEG / WEBP)
+val outFile = File(context.getExternalFilesDir(null), "page_cover.png")
+val isSaved: Boolean = PdfUtils.savePageToFile(
+    context = context,
+    file = pdfFile,
+    pageIndex = 0,
+    outputFile = outFile,
+    format = Bitmap.CompressFormat.PNG,
+    quality = 100
+)
+
+// 3. Print PDF via Native Android System Print Spooler (PrintManager)
+PdfUtils.print(activityContext, pdfFile, "My Print Job")
+// Or print from Uri:
+PdfUtils.print(activityContext, contentUri, "Invoice_101")
+
+// 4. Share PDF via Native Android Share Sheet
+PdfUtils.share(activityContext, contentUri, "Share PDF Document")
+
+// 5. Get total page count directly
 val pageCount: Int = PdfUtils.getPageCount(context, pdfFile)
 
-// 3. Check if PDF is encrypted / password protected
+// 6. Check if PDF is encrypted / password protected
 val isLocked: Boolean = PdfUtils.isPasswordProtected(context, pdfFile)
 
-// 4. Extract metadata directly
+// 7. Extract metadata directly (Title, Author, Subject, Producer, Dates, etc.)
 val meta: PdfDocument.Meta = PdfUtils.getDocumentMeta(context, pdfFile)
 val title = meta.title
 val author = meta.author
 
-// 5. Extract Table of Contents without opening view
+// 8. Extract Table of Contents without opening view
 val bookmarks: List<PdfDocument.Bookmark> = PdfUtils.getTableOfContents(context, pdfFile)
+
+// 9. Cache an Asset file to a standard File
+val cachedFile: File = PdfUtils.fileFromAsset(context, "sample.pdf")
 ```
 
 ---

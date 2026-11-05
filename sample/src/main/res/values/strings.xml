@@ -9,4 +9,7 @@
     <string name="doc_info">Document Info</string>
     <string name="toggle_quality">HD Quality Mode (Anti-Blur)</string>
     <string name="no_toc">No Table of Contents (Chapters) available for this document.</string>
+    <string name="export_page">Export Current Page as Image</string>
+    <string name="print_doc">Print Document</string>
+    <string name="share_doc">Share Document</string>
 </resources>

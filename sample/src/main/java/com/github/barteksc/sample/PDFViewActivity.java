@@ -1,8 +1,8 @@
 package com.github.barteksc.sample;
 
 import android.content.ActivityNotFoundException;
-import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +18,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
@@ -25,8 +26,10 @@ import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 import com.github.barteksc.pdfviewer.listener.OnPageErrorListener;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 import com.github.barteksc.pdfviewer.util.FitPolicy;
+import com.github.barteksc.pdfviewer.util.PdfUtils;
 import com.shockwave.pdfium.PdfDocument;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,6 +95,18 @@ public class PDFViewActivity extends AppCompatActivity implements
         } else if (id == R.id.menu_doc_info) {
             showDocumentInfoDialog();
             return true;
+        } else if (id == R.id.menu_toggle_quality) {
+            toggleQuality();
+            return true;
+        } else if (id == R.id.menu_export_page) {
+            exportCurrentPageToImage();
+            return true;
+        } else if (id == R.id.menu_print) {
+            printCurrentDocument();
+            return true;
+        } else if (id == R.id.menu_share) {
+            shareCurrentDocument();
+            return true;
         } else if (id == R.id.pickFile) {
             launchPicker();
             return true;
@@ -142,7 +157,7 @@ public class PDFViewActivity extends AppCompatActivity implements
     }
 
     /**
-     * Display the Table of Contents (Bookmarks/Chapters) in an interactive dialog.
+     * Display Table of Contents (Bookmarks/Chapters) hierarchy in an interactive dialog.
      */
     private void showTableOfContentsDialog() {
         if (!pdfView.hasTableOfContents()) {
@@ -210,7 +225,7 @@ public class PDFViewActivity extends AppCompatActivity implements
         } else {
             displayFromAsset(SAMPLE_FILE);
         }
-        Toast.makeText(this, isBestQuality ? "HD Quality Mode (ARGB_8888) Enabled" : "Standard Mode (RGB_565) Enabled", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, isBestQuality ? "HD Quality Mode (ARGB_8888 Anti-Blur) Enabled" : "Standard Mode (RGB_565) Enabled", Toast.LENGTH_SHORT).show();
     }
 
     private void toggleScrollDirection() {
@@ -253,6 +268,9 @@ public class PDFViewActivity extends AppCompatActivity implements
                 .show();
     }
 
+    /**
+     * Display Document Info from PdfDocument.Meta.
+     */
     private void showDocumentInfoDialog() {
         PdfDocument.Meta meta = pdfView.getDocumentMeta();
         StringBuilder sb = new StringBuilder();
@@ -266,11 +284,20 @@ public class PDFViewActivity extends AppCompatActivity implements
             if (meta.getSubject() != null && !meta.getSubject().isEmpty()) {
                 sb.append("Subject: ").append(meta.getSubject()).append("\n\n");
             }
+            if (meta.getKeywords() != null && !meta.getKeywords().isEmpty()) {
+                sb.append("Keywords: ").append(meta.getKeywords()).append("\n\n");
+            }
+            if (meta.getCreator() != null && !meta.getCreator().isEmpty()) {
+                sb.append("Creator: ").append(meta.getCreator()).append("\n\n");
+            }
             if (meta.getProducer() != null && !meta.getProducer().isEmpty()) {
                 sb.append("Producer: ").append(meta.getProducer()).append("\n\n");
             }
             if (meta.getCreationDate() != null && !meta.getCreationDate().isEmpty()) {
                 sb.append("Creation Date: ").append(meta.getCreationDate()).append("\n\n");
+            }
+            if (meta.getModDate() != null && !meta.getModDate().isEmpty()) {
+                sb.append("Modified Date: ").append(meta.getModDate()).append("\n\n");
             }
         }
         sb.append("Total Pages: ").append(pdfView.getPageCount());
@@ -280,6 +307,70 @@ public class PDFViewActivity extends AppCompatActivity implements
                 .setMessage(sb.toString())
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
+    }
+
+    /**
+     * Export the currently displayed page as a high-resolution PNG image on disk.
+     */
+    private void exportCurrentPageToImage() {
+        int currentPage = pdfView.getCurrentPage();
+        File exportDir = getExternalFilesDir(null);
+        if (exportDir == null) exportDir = getCacheDir();
+        File outFile = new File(exportDir, "page_" + (currentPage + 1) + ".png");
+
+        try {
+            boolean success = false;
+            if (uri != null) {
+                success = PdfUtils.savePageToFile(this, uri, currentPage, outFile, Bitmap.CompressFormat.PNG, 100);
+            } else {
+                File cachedAsset = PdfUtils.fileFromAsset(this, SAMPLE_FILE);
+                success = PdfUtils.savePageToFile(this, cachedAsset, currentPage, outFile, Bitmap.CompressFormat.PNG, 100);
+            }
+
+            if (success) {
+                Toast.makeText(this, "Page " + (currentPage + 1) + " exported to:\n" + outFile.getName(), Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Failed to export page", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Export page failed", e);
+            Toast.makeText(this, "Export error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Print the PDF using Android's native PrintManager.
+     */
+    private void printCurrentDocument() {
+        try {
+            if (uri != null) {
+                PdfUtils.print(this, uri, pdfFileName != null ? pdfFileName : "PDF_Document");
+            } else {
+                File cachedAsset = PdfUtils.fileFromAsset(this, SAMPLE_FILE);
+                PdfUtils.print(this, cachedAsset, "Sample_Document");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Print failed", e);
+            Toast.makeText(this, "Print error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Share the PDF using Android's native share sheet.
+     */
+    private void shareCurrentDocument() {
+        try {
+            if (uri != null) {
+                PdfUtils.share(this, uri, "Share PDF Document");
+            } else {
+                File cachedAsset = PdfUtils.fileFromAsset(this, SAMPLE_FILE);
+                Uri fileUri = FileProvider.getUriForFile(this, getPackageName() + ".provider", cachedAsset);
+                PdfUtils.share(this, fileUri, "Share PDF Document");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Share failed", e);
+            Toast.makeText(this, "Share error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private String getFileName(Uri uri) {
