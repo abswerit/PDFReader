@@ -254,6 +254,32 @@ pdfView.fromAsset("scanned_book.pdf")
 
 ---
 
+### 8. 📸 Standalone PDF Utilities & Thumbnail Extractor
+
+You can render any page of a PDF directly to an Android `Bitmap` (e.g. for generating book covers, gallery previews, or exporting images) or inspect document details **without inflating a PDFView**:
+
+```kotlin
+// 1. Generate Cover Photo / Thumbnail (Page 0) as Bitmap
+val coverBitmap: Bitmap = PdfUtils.renderPageToBitmap(context, pdfFile, pageIndex = 0, width = 400, height = 600)
+imageView.setImageBitmap(coverBitmap)
+
+// 2. Get total page count directly
+val pageCount: Int = PdfUtils.getPageCount(context, pdfFile)
+
+// 3. Check if PDF is encrypted / password protected
+val isLocked: Boolean = PdfUtils.isPasswordProtected(context, pdfFile)
+
+// 4. Extract metadata directly
+val meta: PdfDocument.Meta = PdfUtils.getDocumentMeta(context, pdfFile)
+val title = meta.title
+val author = meta.author
+
+// 5. Extract Table of Contents without opening view
+val bookmarks: List<PdfDocument.Bookmark> = PdfUtils.getTableOfContents(context, pdfFile)
+```
+
+---
+
 ## ⚙️ Configuration Reference
 
 | Config Method | Description | Default |
