@@ -234,6 +234,26 @@ pdfView.zoomWithAnimation(2.0f) // zoom to 2x
 
 ---
 
+### 7. 🔍 Anti-Blur & HD Quality Mode (Fix for Scanned & Image PDFs)
+
+If you are displaying scanned book pages, photocopied documents, or raster image PDFs, text and images can sometimes appear blurry or low-resolution under default rendering.
+
+To solve this, enable **`useBestQuality(true)`**:
+
+```kotlin
+pdfView.fromAsset("scanned_book.pdf")
+    .useBestQuality(true)       // Forces 32-bit ARGB_8888 bitmap rendering for crisp text
+    .enableAntialiasing(true)    // Bilinear filtering on bitmap parts
+    .load()
+```
+
+#### What makes this sharp and anti-blur:
+1. **`useBestQuality(true)`:** Switches bitmap rendering from 16-bit `RGB_565` to 32-bit `ARGB_8888`. This preserves fine grayscale antialiasing around scanned text and edges.
+2. **Tile & Thumbnail Boost:** Internal tile part size is upgraded to 512px and thumbnail ratio to 0.5f in `Constants`, preventing blurry downscaled previews.
+3. **Canvas Filtering:** Paint operates with `setFilterBitmap(true)` and `setDither(true)` for smooth scaling without pixelation.
+
+---
+
 ## ⚙️ Configuration Reference
 
 | Config Method | Description | Default |
@@ -241,6 +261,7 @@ pdfView.zoomWithAnimation(2.0f) // zoom to 2x
 | `enableSwipe(boolean)` | Enable or disable touch swiping | `true` |
 | `swipeHorizontal(boolean)` | Scroll horizontally instead of vertically | `false` |
 | `enableDoubletap(boolean)` | Enable double-tap to zoom | `true` |
+| `useBestQuality(boolean)` | Render with ARGB_8888 for HD crisp scanned image PDFs | `false` |
 | `defaultPage(int)` | Initial page to open (0-indexed) | `0` |
 | `nightMode(boolean)` | Invert page colors for dark theme | `false` |
 | `enableAnnotationRendering(boolean)` | Render embedded annotations & form fields | `false` |

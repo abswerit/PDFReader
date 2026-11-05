@@ -7,5 +7,6 @@
     <string name="scroll_direction">Toggle Horizontal/Vertical</string>
     <string name="jump_to_page">Jump to Page</string>
     <string name="doc_info">Document Info</string>
+    <string name="toggle_quality">HD Quality Mode (Anti-Blur)</string>
     <string name="no_toc">No Table of Contents (Chapters) available for this document.</string>
 </resources>

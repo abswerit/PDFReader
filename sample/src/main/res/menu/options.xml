@@ -28,6 +28,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_toggle_quality"
+        android:title="@string/toggle_quality"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/pickFile"
         android:icon="@drawable/ic_open_in_browser_grey_700_48dp"
         android:title="@string/pick_file"

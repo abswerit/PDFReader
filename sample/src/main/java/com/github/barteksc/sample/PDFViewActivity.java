@@ -42,6 +42,7 @@ public class PDFViewActivity extends AppCompatActivity implements
     private String pdfFileName;
     private boolean isNightMode = false;
     private boolean isSwipeHorizontal = false;
+    private boolean isBestQuality = true;
 
     private final ActivityResultLauncher<String> filePickerLauncher =
             registerForActivityResult(new ActivityResultContracts.GetContent(), resultUri -> {
@@ -116,6 +117,7 @@ public class PDFViewActivity extends AppCompatActivity implements
                 .scrollHandle(new DefaultScrollHandle(this))
                 .spacing(10)
                 .nightMode(isNightMode)
+                .useBestQuality(isBestQuality)
                 .swipeHorizontal(isSwipeHorizontal)
                 .onPageError(this)
                 .pageFitPolicy(FitPolicy.BOTH)
@@ -132,6 +134,7 @@ public class PDFViewActivity extends AppCompatActivity implements
                 .scrollHandle(new DefaultScrollHandle(this))
                 .spacing(10)
                 .nightMode(isNightMode)
+                .useBestQuality(isBestQuality)
                 .swipeHorizontal(isSwipeHorizontal)
                 .onPageError(this)
                 .pageFitPolicy(FitPolicy.BOTH)
@@ -197,6 +200,17 @@ public class PDFViewActivity extends AppCompatActivity implements
         isNightMode = !isNightMode;
         pdfView.setNightMode(isNightMode);
         Toast.makeText(this, isNightMode ? "Night Mode Enabled" : "Night Mode Disabled", Toast.LENGTH_SHORT).show();
+    }
+
+    private void toggleQuality() {
+        isBestQuality = !isBestQuality;
+        pageNumber = pdfView.getCurrentPage();
+        if (uri != null) {
+            displayFromUri(uri);
+        } else {
+            displayFromAsset(SAMPLE_FILE);
+        }
+        Toast.makeText(this, isBestQuality ? "HD Quality Mode (ARGB_8888) Enabled" : "Standard Mode (RGB_565) Enabled", Toast.LENGTH_SHORT).show();
     }
 
     private void toggleScrollDirection() {

@@ -256,6 +256,9 @@ public class PDFView extends RelativeLayout {
         pagesLoader = new PagesLoader(this);
 
         paint = new Paint();
+        paint.setFilterBitmap(true);
+        paint.setDither(true);
+        paint.setAntiAlias(true);
         debugPaint = new Paint();
         debugPaint.setStyle(Style.STROKE);
 
@@ -1381,6 +1384,8 @@ public class PDFView extends RelativeLayout {
 
         private boolean nightMode = false;
 
+        private boolean bestQuality = false;
+
         private Configurator(DocumentSource documentSource) {
             this.documentSource = documentSource;
         }
@@ -1520,6 +1525,11 @@ public class PDFView extends RelativeLayout {
             return this;
         }
 
+        public Configurator useBestQuality(boolean bestQuality) {
+            this.bestQuality = bestQuality;
+            return this;
+        }
+
         public Configurator disableLongpress() {
             PDFView.this.dragPinchManager.disableLongpress();
             return this;
@@ -1544,6 +1554,7 @@ public class PDFView extends RelativeLayout {
             PDFView.this.callbacks.setLinkHandler(linkHandler);
             PDFView.this.setSwipeEnabled(enableSwipe);
             PDFView.this.setNightMode(nightMode);
+            PDFView.this.useBestQuality(bestQuality);
             PDFView.this.enableDoubletap(enableDoubletap);
             PDFView.this.setDefaultPage(defaultPage);
             PDFView.this.setSwipeVertical(!swipeHorizontal);
