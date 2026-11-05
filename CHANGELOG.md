@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1 (2026-11-05)
+* Fixed JitPack cloud build by setting `compileSdkVersion 35` and `androidx.core:core:1.15.0`
+* Configured dual publication artifacts for both `com.github.abswerit:pdfreader` and `com.github.abswerit:PDFReader`
+* Added explicit `rootProject.name = 'PDFReader'` in `settings.gradle`
+
 ## 1.1.0 (2026-11-05)
 * Added standalone PDF utilities (`PdfUtils`) for thumbnail generation, metadata reading, page count, and password verification without inflating a View
 * Added Page-to-Image file export (`PdfUtils.savePageToFile`) for saving PDF pages to PNG/JPEG/WEBP directly to disk

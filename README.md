@@ -2,7 +2,7 @@
 
 [![JitPack](https://jitpack.io/v/abswerit/PDFReader.svg)](https://jitpack.io/#abswerit/PDFReader)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
+[![API](https://img.shields.io/badge/API-24%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=24)
 [![Android Ready](https://img.shields.io/badge/Android%2017%20(API%2037)-Ready-blue)](build.gradle)
 [![16 KB Page Size](https://img.shields.io/badge/16%20KB%20Page%20Size-100%25%20Verified%20%E2%9C%85-success)](16KB_SUPPORT.md)
 
@@ -62,7 +62,8 @@ In your app module's `build.gradle` (or `build.gradle.kts`):
 
 ```groovy
 dependencies {
-    implementation 'com.github.abswerit:PDFReader:1.1.0'
+    // Both 'pdfreader' and 'PDFReader' are supported:
+    implementation 'com.github.abswerit:pdfreader:1.1.1'
 }
 ```
 

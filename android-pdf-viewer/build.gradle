@@ -14,7 +14,7 @@ ext {
     siteUrl = 'https://abswer.com'
     gitUrl = 'https://github.com/abswerit/pdfreader.git'
 
-    libraryVersion = '1.1.0'
+    libraryVersion = '1.1.1'
 
     developerId = 'abswerit'
     developerName = 'Abswer'
@@ -27,11 +27,11 @@ ext {
 
 android {
     namespace 'com.github.barteksc.pdfviewer'
-    compileSdkVersion 37
+    compileSdkVersion 35
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 37
+        minSdkVersion 24
+        targetSdkVersion 35
     }
 
     compileOptions {
@@ -65,13 +65,13 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core:1.17.0'
+    implementation 'androidx.core:core:1.15.0'
     api 'io.github.oothp:pdfium-android:1.9.5-beta01'
 }
 
 // Configure Maven publishing for JitPack
 group = project.findProperty("group") ?: "com.github.abswerit"
-version = project.findProperty("version") ?: "1.1.0"
+version = project.findProperty("version") ?: "1.1.1"
 
 // sources jar is produced via android.publishing.singleVariant.withSourcesJar()
 
@@ -85,6 +85,36 @@ afterEvaluate {
                 version = project.version as String
                 pom {
                     name = "pdfreader"
+                    description = "Android view for displaying PDFs rendered with PdfiumAndroid, maintained by Abswer.com"
+                    url = "https://abswer.com"
+                    developers {
+                        developer {
+                            id = "abswerit"
+                            name = "Abswer"
+                            email = "contact@abswer.com"
+                            url = "https://abswer.com"
+                        }
+                    }
+                    licenses {
+                        license {
+                            name = "The Apache Software License, Version 2.0"
+                            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                    }
+                    scm {
+                        url = "https://github.com/abswerit/pdfreader"
+                        connection = "scm:git:git://github.com/abswerit/pdfreader.git"
+                        developerConnection = "scm:git:ssh://github.com:abswerit/pdfreader.git"
+                    }
+                }
+            }
+            releasePdfReader(MavenPublication) {
+                from components.release
+                groupId = project.group
+                artifactId = "PDFReader"
+                version = project.version as String
+                pom {
+                    name = "PDFReader"
                     description = "Android view for displaying PDFs rendered with PdfiumAndroid, maintained by Abswer.com"
                     url = "https://abswer.com"
                     developers {
