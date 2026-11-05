@@ -1,12 +1,17 @@
 # Changelog
 
-## 1.0.0 (2026-11-03)
-* Maintained and customized by Abswer.com (https://abswer.com)
-* Added support for Android 15 16 KB memory page size alignment
-* Upgraded to Android Gradle Plugin 8.13.0 and Gradle 8.14
-* Target SDK updated to 36
-* Added JitPack publishing configuration for `com.github.abswerit:pdfreader:1.0.0`
-* Automated GitHub CI build workflow
+## 1.1.0 (2026-11-05)
+* Added standalone PDF utilities (`PdfUtils`) for thumbnail generation, metadata reading, page count, and password verification without inflating a View
+* Added Page-to-Image file export (`PdfUtils.savePageToFile`) for saving PDF pages to PNG/JPEG/WEBP directly to disk
+* Added native Android System Printing (`PdfPrintDocumentAdapter` & `PdfUtils.print`) via Android `PrintManager`
+* Added native PDF sharing utility (`PdfUtils.share`) with AndroidX `FileProvider` integration
+* Added Table of Contents (Bookmarks / Digital Chapters) hierarchy extraction (`hasTableOfContents`, `getTableOfContents`) and interactive navigation dialog
+* Added Anti-Blur HD rendering mode (`useBestQuality(true)` ARGB_8888, 512px tile parts, and bilinear canvas filtering) to resolve blurry scanned image PDFs
+* Added `ScrollDir` (scroll direction tracking) and `SnapEdge` utilities
+* Migrated background decoding from deprecated `android.os.AsyncTask` to modern multi-threaded `ExecutorService` and `Handler(Looper.getMainLooper())`
+* Targeted Android 17 (API 37) with AGP 8.13.0 and Gradle 8.14
+* Full compliance with 16 KB memory page size requirements (`0x4000` alignment on all 64-bit ELF binaries)
+* Added copy-paste ready Jetpack Compose integration snippet in documentation
 
 ## 3.2.0-beta.1 (2019-08-18)
 * Merge PR #714 with optimized page load

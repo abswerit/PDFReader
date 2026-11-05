@@ -14,7 +14,7 @@ ext {
     siteUrl = 'https://abswer.com'
     gitUrl = 'https://github.com/abswerit/pdfreader.git'
 
-    libraryVersion = '1.0.0'
+    libraryVersion = '1.1.0'
 
     developerId = 'abswerit'
     developerName = 'Abswer'
@@ -71,7 +71,7 @@ dependencies {
 
 // Configure Maven publishing for JitPack
 group = project.findProperty("group") ?: "com.github.abswerit"
-version = project.findProperty("version") ?: "1.0.0"
+version = project.findProperty("version") ?: "1.1.0"
 
 // sources jar is produced via android.publishing.singleVariant.withSourcesJar()
 

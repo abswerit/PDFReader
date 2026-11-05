@@ -62,7 +62,7 @@ In your app module's `build.gradle` (or `build.gradle.kts`):
 
 ```groovy
 dependencies {
-    implementation 'com.github.abswerit:PDFReader:1.0.0'
+    implementation 'com.github.abswerit:PDFReader:1.1.0'
 }
 ```
 
